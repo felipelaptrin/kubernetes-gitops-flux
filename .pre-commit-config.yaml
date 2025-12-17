@@ -1,0 +1,23 @@
+repos:
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.99.5
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_docs
+        args:
+          - --hook-config=--create-file-if-not-exist=true
+          - "--args=--lockfile=false"
+      - id: terraform_validate
+        args:
+          - --hook-config=--retry-once-with-cleanup=true
+      - id: terraform_providers_lock
+        args:
+          - --args=-platform=linux_amd64
+          - --args=-platform=darwin_arm64
+          - --hook-config=--mode=always-regenerate-lockfile
+      - id: terraform_tflint
+      - id: terraform_trivy
+        args:
+          - --hook-config=--parallelism-limit=1
+          - --args=--severity HIGH,CRITICAL
+          - --args=--ignorefile=__GIT_WORKING_DIR__/.trivyignore.yaml
