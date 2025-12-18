@@ -1,0 +1,5 @@
+provider:
+  name: aws
+policy: sync
+serviceAccount:
+  name: external-dns
