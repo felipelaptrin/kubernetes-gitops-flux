@@ -3,8 +3,9 @@ kind: EC2NodeClass
 metadata:
   name: default
 spec:
-  role: "${TF_K8S_NODE_ROLE_ARN}"
-  amiFamily: AL2 # Amazon Linux 2
+  role: "${TF_K8S_NODE_ROLE_NAME}"
+  amiSelectorTerms:
+    - alias: al2@latest
   subnetSelectorTerms:
     - tags:
         karpenter.sh/discovery: "${TF_CLUSTER_NAME}"
