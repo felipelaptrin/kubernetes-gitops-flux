@@ -28,7 +28,7 @@ spec:
   releaseName: istiod
   interval: 5m
   dependsOn:
-    - name: istiod
+    - name: istio-base
       namespace: istio-system
   chart:
     spec:
@@ -48,7 +48,7 @@ spec:
   releaseName: istio-ingress
   interval: 5m
   dependsOn:
-    - name: istio-base
+    - name: istiod
       namespace: istio-system
   chart:
     spec:
