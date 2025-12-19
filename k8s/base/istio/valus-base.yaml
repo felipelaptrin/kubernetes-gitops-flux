@@ -1,0 +1,2 @@
+# Istio docs note defaultRevision is required for revisioned installs.
+defaultRevision: default
