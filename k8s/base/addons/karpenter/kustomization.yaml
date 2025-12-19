@@ -4,6 +4,8 @@ resources:
   - namespace.yaml
   - oci-repository.yaml
   - helm-release.yaml
+  - ec2-node-class.yaml
+  - node-pool.yaml
 
 configMapGenerator:
   - name: karpenter-values-base
