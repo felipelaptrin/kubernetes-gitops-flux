@@ -1,0 +1,1 @@
+The `standard-install.yaml` file was downloaded from https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/standard-install.yaml and pasted here.
