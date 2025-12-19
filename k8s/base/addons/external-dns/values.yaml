@@ -5,6 +5,3 @@ serviceAccount:
   name: external-dns
 sources:
   - gateway-httproute
-  - gateway-tlsroute
-  - gateway-tcproute
-  - gateway-udproute
