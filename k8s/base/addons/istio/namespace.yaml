@@ -4,10 +4,3 @@ metadata:
   name: istio-system
 spec: {}
 status: {}
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: istio-ingress
-spec: {}
-status: {}
