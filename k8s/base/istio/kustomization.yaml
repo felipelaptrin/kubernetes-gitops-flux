@@ -9,7 +9,7 @@ configMapGenerator:
   - name: istio-base-values-base
     namespace: istio-system
     files:
-      - values.yaml
+      - values-base.yaml
 
 generatorOptions:
   disableNameSuffixHash: true
