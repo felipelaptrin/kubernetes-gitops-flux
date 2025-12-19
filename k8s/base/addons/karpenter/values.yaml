@@ -6,6 +6,3 @@ controller:
     limits:
       cpu: "1"
       memory: 1Gi
-serviceAccount:
-  annotations:
-    eks.amazonaws.com/role-arn: "arn:${AWS_PARTITION}:iam::${AWS_ACCOUNT_ID}:role/${CLUSTER_NAME}-karpenter"
