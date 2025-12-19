@@ -16,7 +16,7 @@ spec:
   interval: 5m
   valuesFrom:
     - kind: ConfigMap
-      name: alb-controller-base-values-base
+      name: alb-controller-values-base
       valuesKey: values.yaml
     - kind: ConfigMap
       name: alb-controller-base-values-terraform
