@@ -3,7 +3,6 @@ provider:
 policy: sync
 serviceAccount:
   name: external-dns
-gatewayNamespace: istio-system
 sources:
   - gateway-httproute
   - gateway-tlsroute
