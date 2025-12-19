@@ -16,9 +16,9 @@ spec:
       service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
       service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "tcp"
   listeners:
-    - name: https
+    - name: http
       protocol: HTTP # TLS is on the NLB
-      port: 443
+      port: 80
       allowedRoutes:
         namespaces:
           from: All
