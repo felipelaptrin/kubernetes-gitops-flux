@@ -5,6 +5,8 @@ metadata:
   namespace: reloader
 spec:
   releaseName: reloader
+  driftDetection:
+    mode: enabled
   chart:
     spec:
       chart: reloader

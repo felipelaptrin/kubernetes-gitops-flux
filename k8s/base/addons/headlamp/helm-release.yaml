@@ -5,6 +5,8 @@ metadata:
   namespace: headlamp
 spec:
   releaseName: headlamp
+  driftDetection:
+    mode: enabled
   chart:
     spec:
       chart: headlamp

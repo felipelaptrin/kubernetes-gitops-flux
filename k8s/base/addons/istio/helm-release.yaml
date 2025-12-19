@@ -5,6 +5,8 @@ metadata:
   namespace: istio-system
 spec:
   releaseName: istio-base
+  driftDetection:
+    mode: enabled
   interval: 5m
   chart:
     spec:
@@ -26,6 +28,8 @@ metadata:
   namespace: istio-system
 spec:
   releaseName: istiod
+  driftDetection:
+    mode: enabled
   interval: 5m
   dependsOn:
     - name: istio-base

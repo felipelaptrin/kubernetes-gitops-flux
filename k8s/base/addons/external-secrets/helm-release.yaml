@@ -5,6 +5,8 @@ metadata:
   namespace: external-secrets
 spec:
   releaseName: external-secrets
+  driftDetection:
+    mode: enabled
   interval: 5m
   chart:
     spec:

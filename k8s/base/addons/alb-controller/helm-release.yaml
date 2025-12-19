@@ -5,6 +5,8 @@ metadata:
   namespace: kube-system
 spec:
   releaseName: alb-controller
+  driftDetection:
+    mode: enabled
   chart:
     spec:
       chart: aws-load-balancer-controller

@@ -5,6 +5,8 @@ metadata:
   namespace: kube-system
 spec:
   releaseName: metrics-server
+  driftDetection:
+    mode: enabled
   chart:
     spec:
       chart: metrics-server

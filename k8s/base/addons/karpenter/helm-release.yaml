@@ -5,9 +5,10 @@ metadata:
   namespace: karpenter
 spec:
   releaseName: karpenter
+  driftDetection:
+    mode: enabled
   interval: 5m
   targetNamespace: karpenter
-  timeout: 10m
   chartRef:
     kind: OCIRepository
     name: karpenter
