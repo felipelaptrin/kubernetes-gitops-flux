@@ -3,3 +3,4 @@ provider:
 policy: sync
 serviceAccount:
   name: external-dns
+gatewayNamespace: istio-system
