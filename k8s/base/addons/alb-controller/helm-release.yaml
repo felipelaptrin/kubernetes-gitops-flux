@@ -19,5 +19,5 @@ spec:
       name: alb-controller-values-base
       valuesKey: values.yaml
     - kind: ConfigMap
-      name: alb-controller-base-values-terraform
+      name: alb-controller-values-terraform
       valuesKey: values.yaml
