@@ -48,6 +48,8 @@ spec:
   releaseName: istio-ingress
   interval: 5m
   dependsOn:
+    - name: istio-base
+      namespace: istio-system
     - name: istiod
       namespace: istio-system
   chart:
