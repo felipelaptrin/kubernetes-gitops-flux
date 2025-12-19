@@ -6,8 +6,8 @@ resources:
   - helm-release.yaml
 
 configMapGenerator:
-  - name: external-dns-values-base
-    namespace: external-dns
+  - name: karpenter-values-base
+    namespace: karpenter
     files:
       - values.yaml
 
