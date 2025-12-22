@@ -12,3 +12,5 @@ spec:
   securityGroupSelectorTerms:
     - tags:
         karpenter.sh/discovery: "${TF_CLUSTER_NAME}"
+  tags:
+    Name: "karpenter-${TF_CLUSTER_NAME}"
