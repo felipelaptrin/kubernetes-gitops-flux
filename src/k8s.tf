@@ -42,7 +42,7 @@ resource "github_repository_file" "flux_bootstrap_addons" {
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: flux-system-crds
+  name: addons
   namespace: flux-system
 spec:
   interval: 10m0s
