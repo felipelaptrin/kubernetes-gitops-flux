@@ -15,7 +15,7 @@ resource "flux_bootstrap_git" "this" {
 resource "github_repository_file" "flux_bootstrap_crds" {
   repository          = var.repository_name
   branch              = "main"
-  file                = "${local.flux_bootstrap_path}/flux-system/crds.yaml"
+  file                = "${local.flux_bootstrap_path}/crds.yaml"
   content             = <<-YAML
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
@@ -37,7 +37,7 @@ YAML
 resource "github_repository_file" "flux_bootstrap_addons" {
   repository          = var.repository_name
   branch              = "main"
-  file                = "${local.flux_bootstrap_path}/flux-system/addons.yaml"
+  file                = "${local.flux_bootstrap_path}/addons.yaml"
   content             = <<-YAML
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
