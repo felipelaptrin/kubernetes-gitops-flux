@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - gotk-components.yaml
   - gotk-sync.yaml
+  - crds.yaml
 patches:
   - target:
       group: kustomize.toolkit.fluxcd.io
@@ -17,3 +18,7 @@ patches:
           substituteFrom:
             - kind: ConfigMap
               name: cluster-vars-terraform
+      - op: add
+        path: /spec/dependsOn
+        value:
+          - name: flux-system-crds
