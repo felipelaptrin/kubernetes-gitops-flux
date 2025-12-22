@@ -1,0 +1,15 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: karpenter-crd
+  namespace: karpenter
+spec:
+  releaseName: karpenter-crd
+  driftDetection:
+    mode: enabled
+  interval: 5m
+  targetNamespace: karpenter
+  chartRef:
+    kind: OCIRepository
+    name: karpenter-crd
+    namespace: flux-system
