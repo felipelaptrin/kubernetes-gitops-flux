@@ -1,7 +1,7 @@
 replicaCount: 1
 image:
   pullPolicy: IfNotPresent
-  tag: "v0.17.0"
+  tag: "v0.20.3"
 installCRDs: true
 serviceAccount:
   create: true
