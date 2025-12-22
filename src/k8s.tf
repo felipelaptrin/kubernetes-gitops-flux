@@ -54,10 +54,9 @@ spec:
     kind: GitRepository
     name: flux-system
   postBuild:
-    value:
-      substituteFrom:
-        - kind: ConfigMap
-          name: cluster-vars-terraform
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-vars-terraform
 YAML
   commit_message      = "bootstrap Flux"
   overwrite_on_create = true
