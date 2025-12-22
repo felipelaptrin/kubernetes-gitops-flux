@@ -13,7 +13,6 @@ spec:
     kind: GitRepository
     name: flux-system
   postBuild:
-    value:
-      substituteFrom:
-        - kind: ConfigMap
-          name: cluster-vars-terraform
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-vars-terraform
