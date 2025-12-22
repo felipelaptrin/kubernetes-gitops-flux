@@ -4,42 +4,12 @@
 resource "flux_bootstrap_git" "this" {
   depends_on = [
     kubernetes_config_map_v1.cluster_vars,
-    kubernetes_namespace.external_secrets,
+    kubernetes_namespace.external_dns,
     kubernetes_namespace.karpenter
   ]
 
-  path                   = local.flux_bootstrap_path
-  version                = var.flux_version
-  kustomization_override = <<-EOF
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-  - gotk-components.yaml
-  - gotk-sync.yaml
-  - crds.yaml
-patches:
-  - target:
-      group: kustomize.toolkit.fluxcd.io
-      version: v1
-      kind: Kustomization
-      name: flux-system
-      namespace: flux-system
-    patch: |-
-      - op: add
-        path: /spec/postBuild
-        value:
-          substituteFrom:
-            - kind: ConfigMap
-              name: cluster-vars-terraform
-      - op: add
-        path: /spec/dependsOn
-        value:
-          - name: flux-system-crds
-EOF
-  timeouts = {
-    create = "5m"
-    update = "5m"
-  }
+  path    = local.flux_bootstrap_path
+  version = var.flux_version
 }
 
 resource "github_repository_file" "flux_bootstrap_crds" {
@@ -50,15 +20,44 @@ resource "github_repository_file" "flux_bootstrap_crds" {
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: flux-system-crds
+  name: crds
   namespace: flux-system
 spec:
   interval: 10m0s
-  path: ./${local.flux_bootstrap_path}/crds
+  path: ./k8s/crds/${var.environment}
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
+YAML
+  commit_message      = "bootstrap Flux"
+  overwrite_on_create = true
+}
+
+resource "github_repository_file" "flux_bootstrap_addons" {
+  repository          = var.repository_name
+  branch              = "main"
+  file                = "${local.flux_bootstrap_path}/flux-system/addons.yaml"
+  content             = <<-YAML
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: flux-system-crds
+  namespace: flux-system
+spec:
+  interval: 10m0s
+  path: ./k8s/addons/${var.environment}
+  prune: true
+  dependsOn:
+    - name: crds
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  postBuild:
+    value:
+      substituteFrom:
+        - kind: ConfigMap
+          name: cluster-vars-terraform
 YAML
   commit_message      = "bootstrap Flux"
   overwrite_on_create = true
