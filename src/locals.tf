@@ -13,5 +13,7 @@ locals {
 
   acm_certificate_arn = module.ingress_acm_certificate.acm_certificate_arn
 
-  k8s_cluster_name = local.prefix // This local var is created only to avoid cyclical dependency between vpc and eks modules
+  k8s_cluster_name     = local.prefix // This local var is created only to avoid cyclical dependency between vpc and eks modules
+  k8s_cluster_role     = module.eks.eks_managed_node_groups["general-purpose"].iam_role_name
+  k8s_cluster_role_arn = module.eks.eks_managed_node_groups["general-purpose"].iam_role_arn
 }

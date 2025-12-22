@@ -78,7 +78,7 @@ resource "kubernetes_config_map_v1" "cluster_vars" {
     "TF_ACM_CERT_ARN"       = local.acm_certificate_arn
     "TF_HEADLAMP_HOSTNAME"  = "headlamp.${var.domain}"
     "TF_CLUSTER_NAME"       = local.k8s_cluster_name
-    "TF_K8S_NODE_ROLE_NAME" = module.eks.eks_managed_node_groups["general-purpose"].iam_role_name
+    "TF_K8S_NODE_ROLE_NAME" = local.k8s_cluster_role
   }
 }
 
@@ -264,7 +264,10 @@ module "karpenter" {
   version    = "v21.10.1"
   depends_on = [flux_bootstrap_git.this]
 
-  cluster_name = module.eks.cluster_name
+  cluster_name         = module.eks.cluster_name
+  create_node_iam_role = false
+  node_iam_role_arn    = local.k8s_cluster_role_arn
+  create_access_entry  = false
   node_iam_role_additional_policies = {
     AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   }
