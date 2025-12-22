@@ -1,0 +1,10 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: karpenter-crd
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: oci://public.ecr.aws/karpenter/karpenter-crd
+  ref:
+    tag: 1.8.3
