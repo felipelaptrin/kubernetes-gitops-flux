@@ -284,7 +284,7 @@ resource "kubernetes_namespace" "karpenter" {
 }
 
 resource "kubernetes_config_map_v1" "karpenter" {
-  depends_on = [kubernetes_namespace.external_dns]
+  depends_on = [kubernetes_namespace.karpenter]
   immutable  = true
 
   metadata {
