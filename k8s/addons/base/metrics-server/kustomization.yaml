@@ -3,3 +3,14 @@ kind: Kustomization
 resources:
   - helm-repository.yaml
   - helm-release.yaml
+
+configMapGenerator:
+  - name: metrics-server-values-base
+    namespace: metrics-server
+    files:
+      - values.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+  labels:
+    reconcile.fluxcd.io/watch: Enabled

@@ -16,3 +16,7 @@ spec:
         name: metrics-server
         namespace: flux-system
   interval: 5m
+  valuesFrom:
+    - kind: ConfigMap
+      name: metrics-server-values-base
+      valuesKey: values.yaml
