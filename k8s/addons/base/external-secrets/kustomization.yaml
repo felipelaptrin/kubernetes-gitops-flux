@@ -4,6 +4,7 @@ resources:
   - namespace.yaml
   - helm-repository.yaml
   - helm-release.yaml
+  - cluster-secret-store.yaml
 
 configMapGenerator:
   - name: external-secrets-values-base
