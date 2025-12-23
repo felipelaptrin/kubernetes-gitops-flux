@@ -29,59 +29,6 @@ module "vpc" {
 }
 
 ##############################
-##### DATABASE
-##############################
-# module "sg_authentik_db" {
-#   source  = "terraform-aws-modules/security-group/aws"
-#   version = "5.3.0"
-
-#   name   = "authentik-rds"
-#   vpc_id = module.vpc.vpc_id
-
-#   ingress_with_cidr_blocks = [
-#     {
-#       from_port   = 5432
-#       to_port     = 5432
-#       protocol    = "tcp"
-#       description = "PostgreSQL access from within VPC"
-#       cidr_blocks = module.vpc.vpc_cidr_block
-#     },
-#   ]
-# }
-
-# module "db_authentik" {
-#   source  = "terraform-aws-modules/rds/aws"
-#   version = "6.13.0"
-
-#   identifier = "authentik"
-
-#   engine                   = "postgres"
-#   engine_version           = "17"
-#   engine_lifecycle_support = "open-source-rds-extended-support-disabled"
-#   family                   = "postgres17"
-#   major_engine_version     = "17.5"
-#   instance_class           = "db.t3.micro"
-
-#   allocated_storage     = 20
-#   max_allocated_storage = 100
-
-#   db_name  = "authentik"
-#   username = "authentik"
-#   port     = 5432
-
-#   manage_master_user_password_rotation              = true
-#   master_user_password_rotate_immediately           = false
-#   master_user_password_rotation_schedule_expression = "rate(15 days)"
-
-#   multi_az               = true
-#   db_subnet_group_name   = module.vpc.database_subnet_group
-#   vpc_security_group_ids = [module.sg_authentik_db.security_group_id]
-
-#   skip_final_snapshot = true
-#   deletion_protection = false
-# }
-
-##############################
 ##### KUBERNETES
 ##############################
 module "eks" {
@@ -171,4 +118,57 @@ module "ingress_acm_certificate" {
     "*.${var.domain}",
   ]
   wait_for_validation = true
+}
+
+##############################
+##### DATABASE
+##############################
+module "sg_authentik_db" {
+  source  = "terraform-aws-modules/security-group/aws"
+  version = "5.3.1"
+
+  name   = "authentik-rds"
+  vpc_id = module.vpc.vpc_id
+
+  ingress_with_cidr_blocks = [
+    {
+      from_port   = 5432
+      to_port     = 5432
+      protocol    = "tcp"
+      description = "PostgreSQL access from within VPC"
+      cidr_blocks = module.vpc.vpc_cidr_block
+    },
+  ]
+}
+
+module "db_authentik" {
+  source  = "terraform-aws-modules/rds/aws"
+  version = "6.13.1"
+
+  identifier = "authentik"
+
+  engine                   = "postgres"
+  engine_version           = "17"
+  engine_lifecycle_support = "open-source-rds-extended-support-disabled"
+  family                   = "postgres17"
+  major_engine_version     = "17.5"
+  instance_class           = "db.t3.micro"
+
+  allocated_storage     = 20
+  max_allocated_storage = 100
+
+  db_name  = "authentik"
+  username = "authentik"
+  port     = 5432
+
+  manage_master_user_password_rotation              = true
+  master_user_password_rotate_immediately           = false
+  master_user_password_rotation_schedule_expression = "rate(15 days)"
+
+  multi_az               = true
+  db_subnet_group_name   = module.vpc.database_subnet_group
+  vpc_security_group_ids = [module.sg_authentik_db.security_group_id]
+
+  skip_final_snapshot = true
+  deletion_protection = false
 }

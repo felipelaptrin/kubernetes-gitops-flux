@@ -121,11 +121,13 @@ resource "kubernetes_config_map_v1" "cluster_vars" {
   }
 
   data = {
-    "TF_AWS_REGION"         = var.aws_region
-    "TF_ACM_CERT_ARN"       = local.acm_certificate_arn
-    "TF_HEADLAMP_HOSTNAME"  = "headlamp.${var.domain}"
-    "TF_CLUSTER_NAME"       = local.k8s_cluster_name
-    "TF_K8S_NODE_ROLE_NAME" = local.k8s_cluster_role
+    "TF_AWS_REGION"                   = var.aws_region
+    "TF_ACM_CERT_ARN"                 = local.acm_certificate_arn
+    "TF_HEADLAMP_HOSTNAME"            = "headlamp.${var.domain}"
+    "TF_CLUSTER_NAME"                 = local.k8s_cluster_name
+    "TF_K8S_NODE_ROLE_NAME"           = local.k8s_cluster_role
+    "TF_AUTHENTIK_DB_SECRET_ARN"      = module.db_authentik.db_instance_master_user_secret_arn
+    "TF_AUTHENTIK_SECRET_MANAGER_ARN" = aws_secretsmanager_secret.authentik_secret.arn
   }
 }
 
@@ -354,16 +356,48 @@ resource "kubernetes_config_map_v1" "karpenter" {
 ##############################
 ##### AUTHENTIK
 ##############################
-# resource "random_password" "authentik_secret" {
-#   length  = 64
-#   special = false
-# }
+resource "random_password" "authentik_secret" {
+  length  = 64
+  special = false
+}
 
-# resource "aws_secretsmanager_secret" "authentik_secret" {
-#   name = "authentik/secret-key"
-# }
+resource "aws_secretsmanager_secret" "authentik_secret" {
+  name = "authentik/secret-key"
+}
 
-# resource "aws_secretsmanager_secret_version" "authentik_secret_value" {
-#   secret_id     = aws_secretsmanager_secret.authentik_secret.id
-#   secret_string = random_password.authentik_secret.result
-# }
+resource "aws_secretsmanager_secret_version" "authentik_secret_value" {
+  secret_id     = aws_secretsmanager_secret.authentik_secret.id
+  secret_string = random_password.authentik_secret.result
+}
+
+resource "kubernetes_namespace_v1" "authentik" {
+  metadata {
+    labels = {
+      "app.kubernetes.io/managed-by" = "terraform"
+    }
+    name = "authentik"
+  }
+}
+
+resource "kubernetes_config_map_v1" "authentik" {
+  depends_on = [kubernetes_namespace_v1.authentik]
+  immutable  = true
+
+  metadata {
+    name      = "authentik-values-terraform"
+    namespace = "authentik"
+    labels = {
+      "app.kubernetes.io/managed-by" = "terraform"
+    }
+  }
+
+  data = {
+    "values.yaml" = yamlencode({
+      authentik = {
+        postgresql = {
+          host = module.db_authentik.db_instance_address
+        }
+      }
+    })
+  }
+}
