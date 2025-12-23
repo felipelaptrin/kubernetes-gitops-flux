@@ -2,7 +2,6 @@ authentik:
   error_reporting:
     enabled: false
   postgresql:
-    host: authentik.clnzkdl5qa9k.us-east-2.rds.amazonaws.com #! AWS Input
     user: file:///postgres-creds/username
     password: file:///postgres-creds/password
     database: authentik
