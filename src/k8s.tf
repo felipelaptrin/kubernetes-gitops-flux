@@ -1,11 +1,28 @@
 ##############################
 ##### BOOTSTRAP FLUX
 ##############################
+resource "kubernetes_namespace_v1" "flux" {
+  metadata {
+    labels = {
+      "app.kubernetes.io/managed-by" = "terraform"
+      # The labels below are to avoid drift with Flux
+      "app.kubernetes.io/instance"            = "flux-system"
+      "app.kubernetes.io/part-of"             = "flux"
+      "app.kubernetes.io/version"             = var.flux_version
+      "kustomize.toolkit.fluxcd.io/name"      = "flux-system"
+      "kustomize.toolkit.fluxcd.io/namespace" = "flux-system"
+    }
+    name = "flux-system"
+  }
+}
+
 resource "flux_bootstrap_git" "this" {
   depends_on = [
     kubernetes_config_map_v1.cluster_vars,
-    kubernetes_namespace.external_dns,
-    kubernetes_namespace.karpenter
+    kubernetes_namespace_v1.flux,
+    kubernetes_namespace_v1.external_dns,
+    kubernetes_namespace_v1.karpenter,
+    module.karpenter,
   ]
 
   path    = local.flux_bootstrap_path
@@ -92,7 +109,8 @@ YAML
 }
 
 resource "kubernetes_config_map_v1" "cluster_vars" {
-  immutable = true
+  depends_on = [kubernetes_namespace_v1.flux]
+  immutable  = true
 
   metadata {
     name      = "cluster-vars-terraform"
@@ -191,7 +209,7 @@ module "external_dns_pod_identity" {
   }
 }
 
-resource "kubernetes_namespace" "external_dns" {
+resource "kubernetes_namespace_v1" "external_dns" {
   metadata {
     labels = {
       "app.kubernetes.io/managed-by" = "terraform"
@@ -201,7 +219,7 @@ resource "kubernetes_namespace" "external_dns" {
 }
 
 resource "kubernetes_config_map_v1" "external_dns" {
-  depends_on = [flux_bootstrap_git.this, kubernetes_namespace.external_dns]
+  depends_on = [flux_bootstrap_git.this, kubernetes_namespace_v1.external_dns]
   immutable  = true
 
   metadata {
@@ -289,9 +307,8 @@ module "aws_lb_controller_pod_identity" {
 ##############################
 # Handles Resource Creation (SQS, EventBridge Rules, IAM Role, EKS Access Entry, Pod Identity Association)
 module "karpenter" {
-  source     = "terraform-aws-modules/eks/aws//modules/karpenter"
-  version    = "v21.10.1"
-  depends_on = [flux_bootstrap_git.this]
+  source  = "terraform-aws-modules/eks/aws//modules/karpenter"
+  version = "v21.10.1"
 
   cluster_name         = module.eks.cluster_name
   create_node_iam_role = false
@@ -303,7 +320,7 @@ module "karpenter" {
   namespace = "karpenter"
 }
 
-resource "kubernetes_namespace" "karpenter" {
+resource "kubernetes_namespace_v1" "karpenter" {
   metadata {
     labels = {
       "app.kubernetes.io/managed-by" = "terraform"
@@ -313,7 +330,7 @@ resource "kubernetes_namespace" "karpenter" {
 }
 
 resource "kubernetes_config_map_v1" "karpenter" {
-  depends_on = [kubernetes_namespace.karpenter]
+  depends_on = [kubernetes_namespace_v1.karpenter]
   immutable  = true
 
   metadata {
