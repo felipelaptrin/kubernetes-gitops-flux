@@ -1,8 +1,8 @@
 replicaCount: 1
 image:
   pullPolicy: IfNotPresent
-  tag: "v0.20.3"
-installCRDs: true
+  tag: "v1.2.0"
+installCRDs: false
 serviceAccount:
   create: true
   name: "external-secrets"
