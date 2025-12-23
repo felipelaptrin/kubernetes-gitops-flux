@@ -19,7 +19,7 @@ server:
       readOnly: true
   envFrom:
     - secretRef:
-      name: authentik-secret-key
+        name: authentik-secret-key
 
 worker:
   volumes:
@@ -32,7 +32,7 @@ worker:
       readOnly: true
   envFrom:
     - secretRef:
-      name: authentik-secret-key
+        name: authentik-secret-key
 
 redis:
   enabled: true
