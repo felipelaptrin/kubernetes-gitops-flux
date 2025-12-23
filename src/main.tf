@@ -146,6 +146,17 @@ module "eks" {
       }
     }
   }
+
+  node_security_group_additional_rules = {
+    ingress_cluster_istio_webhook = {
+      source_cluster_security_group = true
+      description                   = "Cluster control plane calls Istio webhook"
+      from_port                     = 15017
+      to_port                       = 15017
+      protocol                      = "tcp"
+      type                          = "ingress"
+    }
+  }
 }
 
 module "ingress_acm_certificate" {
