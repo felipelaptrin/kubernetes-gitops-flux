@@ -6,7 +6,7 @@ resources:
 
 configMapGenerator:
   - name: metrics-server-values-base
-    namespace: metrics-server
+    namespace: kube-system
     files:
       - values.yaml
 
