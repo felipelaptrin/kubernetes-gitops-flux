@@ -30,7 +30,35 @@ spec:
     kind: GitRepository
     name: flux-system
 YAML
-  commit_message      = "bootstrap Flux"
+  commit_message      = "bootstrap flux by installing Kustomize CR to deploy CRDs"
+  overwrite_on_create = true
+}
+
+resource "github_repository_file" "flux_bootstrap_karpenter" {
+  repository          = var.repository_name
+  branch              = "main"
+  file                = "${local.flux_bootstrap_path}/karpenter.yaml"
+  content             = <<-YAML
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: karpenter
+  namespace: flux-system
+spec:
+  interval: 10m0s
+  path: ./k8s/addons/${var.environment}/karpenter
+  prune: true
+  dependsOn:
+    - name: crds
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-vars-terraform
+YAML
+  commit_message      = "bootstrap flux by installing Kustomize CR to deploy Karpenter"
   overwrite_on_create = true
 }
 
@@ -50,6 +78,7 @@ spec:
   prune: true
   dependsOn:
     - name: crds
+    - name: karpenter
   sourceRef:
     kind: GitRepository
     name: flux-system
@@ -58,7 +87,7 @@ spec:
       - kind: ConfigMap
         name: cluster-vars-terraform
 YAML
-  commit_message      = "bootstrap Flux"
+  commit_message      = "bootstrap flux by installing Kustomize CR to deploy addons"
   overwrite_on_create = true
 }
 
