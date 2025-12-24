@@ -39,7 +39,7 @@ spec:
       - paths: [""]
         target:
           kind: ValidatingWebhookConfiguration
-          name: istiod-default-validator
+          name: istio-validator-istio-system
   interval: 5m
   dependsOn:
     - name: istio-base
