@@ -130,6 +130,7 @@ resource "kubernetes_config_map_v1" "cluster_vars" {
     "TF_K8S_NODE_ROLE_NAME"           = local.k8s_cluster_role
     "TF_AUTHENTIK_DB_SECRET_ARN"      = module.db_authentik.db_instance_master_user_secret_arn
     "TF_AUTHENTIK_SECRET_MANAGER_ARN" = aws_secretsmanager_secret.authentik_secret.arn
+    "TF_HEADLAMP_SECRET_MANAGER_ARN"  = aws_secretsmanager_secret.headlamp_secret.arn
   }
 }
 
@@ -362,14 +363,23 @@ resource "random_password" "authentik_secret" {
   special = false
 }
 
+resource "random_password" "authentik_admin_password" {
+  length  = 64
+  special = false
+}
+
 resource "aws_secretsmanager_secret" "authentik_secret" {
   name                    = "authentik/secret-key"
-  recovery_window_in_days = var.authentik_secret_recovery_window
+  recovery_window_in_days = var.secret_recovery_window
 }
 
 resource "aws_secretsmanager_secret_version" "authentik_secret_value" {
-  secret_id     = aws_secretsmanager_secret.authentik_secret.id
-  secret_string = random_password.authentik_secret.result
+  secret_id = aws_secretsmanager_secret.authentik_secret.id
+  secret_string = jsonencode({
+    secretKey     = random_password.authentik_secret.result
+    adminEmail    = "admin@admin.com"
+    adminPassword = aws_secretsmanager_secret.authentik_admin_password.id
+  })
 }
 
 resource "kubernetes_namespace_v1" "authentik" {
@@ -402,4 +412,33 @@ resource "kubernetes_config_map_v1" "authentik" {
       }
     })
   }
+}
+
+##############################
+##### HEADLAMP
+##############################
+resource "random_password" "headlamp_client_id" {
+  length  = 40
+  special = false
+}
+
+resource "random_password" "headlamp_client_secret" {
+  length  = 128
+  special = false
+}
+
+resource "aws_secretsmanager_secret" "headlamp_secret" {
+  name                    = "headlamp/oidc"
+  description             = "Stores OIDC related settings"
+  recovery_window_in_days = var.secret_recovery_window
+}
+
+resource "aws_secretsmanager_secret_version" "headlamp_secret" {
+  secret_id = aws_secretsmanager_secret.headlamp_secret.id
+  secret_string = jsonencode({
+    clientID     = random_password.headlamp_client_id.result
+    clientSecret = random_password.headlamp_client_secret.result
+    issuerURL    = "https://authentik.${var.domain}/application/o/headlamp/"
+    scopes       = "profile,email,groups"
+  })
 }

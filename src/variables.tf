@@ -80,7 +80,7 @@ variable "flux_version" {
 }
 
 
-variable "authentik_secret_recovery_window" {
+variable "secret_recovery_window" {
   description = "Number of days that AWS Secrets Manager waits before it can delete the secret"
   type        = number
 }
