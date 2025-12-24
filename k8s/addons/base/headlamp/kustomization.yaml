@@ -5,6 +5,7 @@ resources:
   - helm-repository.yaml
   - helm-release.yaml
   - external-secrets.yaml
+  - cluster-role-binding.yaml
   - http-route.yaml
 
 configMapGenerator:

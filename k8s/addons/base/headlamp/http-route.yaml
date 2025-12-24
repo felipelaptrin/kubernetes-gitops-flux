@@ -48,5 +48,5 @@ spec:
         - type: RequestHeaderModifier
           requestHeaderModifier:
             set:
-              - name: X-Forwarded-Proto
+              - name: X-Forwarded-Proto # Reference: https://headlamp.dev/docs/latest/installation/in-cluster/oidc/#callback-url
                 value: "https"
