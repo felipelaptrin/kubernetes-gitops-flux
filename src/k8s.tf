@@ -125,6 +125,7 @@ resource "kubernetes_config_map_v1" "cluster_vars" {
     "TF_AWS_REGION"                   = var.aws_region
     "TF_ACM_CERT_ARN"                 = local.acm_certificate_arn
     "TF_HEADLAMP_HOSTNAME"            = "headlamp.${var.domain}"
+    "TF_AUTHENTIK_HOSTNAME"           = "authentik.${var.domain}"
     "TF_CLUSTER_NAME"                 = local.k8s_cluster_name
     "TF_K8S_NODE_ROLE_NAME"           = local.k8s_cluster_role
     "TF_AUTHENTIK_DB_SECRET_ARN"      = module.db_authentik.db_instance_master_user_secret_arn

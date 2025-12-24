@@ -4,6 +4,7 @@ resources:
   - helm-repository.yaml
   - helm-release.yaml
   - external-secrets.yaml
+  - http-route.yaml
 
 configMapGenerator:
   - name: authentik-values-base
