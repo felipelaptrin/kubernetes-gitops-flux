@@ -44,3 +44,11 @@ spec:
         - path:
             type: PathPrefix
             value: /
+      filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+              - name: X-Forwarded-Proto # Reference: https://docs.goauthentik.io/install-config/reverse-proxy/
+                value: "https"
+              - name: X-Forwarded-Port
+                value: "443"
