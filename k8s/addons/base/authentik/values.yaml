@@ -32,7 +32,7 @@ worker:
     - name: postgres-creds
       mountPath: /postgres-creds
       readOnly: true
-   env:
+  env:
     - name: AUTHENTIK_POSTGRESQL__SSLMODE
       value: "require"
   envFrom:
