@@ -7,6 +7,16 @@ authentik:
     database: authentik
     port: 5432
 
+global:
+  envFrom:
+    - secretRef:
+        name: authentik-secret-key
+    - secretRef:
+        name: authentik-bootstrap-admin
+  env:
+    - name: AUTHENTIK_POSTGRESQL__SSLMODE
+      value: "require"
+
 server:
   volumes:
     - name: postgres-creds
@@ -16,12 +26,6 @@ server:
     - name: postgres-creds
       mountPath: /postgres-creds
       readOnly: true
-  env:
-    - name: AUTHENTIK_POSTGRESQL__SSLMODE
-      value: "require"
-  envFrom:
-    - secretRef:
-        name: authentik-secret-key
 
 worker:
   volumes:
@@ -32,12 +36,6 @@ worker:
     - name: postgres-creds
       mountPath: /postgres-creds
       readOnly: true
-  env:
-    - name: AUTHENTIK_POSTGRESQL__SSLMODE
-      value: "require"
-  envFrom:
-    - secretRef:
-        name: authentik-secret-key
 
 redis:
   enabled: true
