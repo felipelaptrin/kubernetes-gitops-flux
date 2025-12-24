@@ -1,7 +1,7 @@
+env:
+  - name: HEADLAMP_CONFIG_OIDC_USE_ACCESS_TOKEN
+    value: "true"
 config:
-  env:
-    - name: HEADLAMP_CONFIG_OIDC_USE_ACCESS_TOKEN
-      value: true
   oidc:
     secret:
       create: false
