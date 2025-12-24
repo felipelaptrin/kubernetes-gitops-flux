@@ -22,6 +22,7 @@ resource "flux_bootstrap_git" "this" {
     kubernetes_namespace_v1.flux,
     kubernetes_namespace_v1.external_dns,
     kubernetes_namespace_v1.karpenter,
+    kubernetes_namespace_v1.authentik,
     module.karpenter,
   ]
 
@@ -197,7 +198,7 @@ resource "kubernetes_config_map_v1" "gateway_api" {
 ##############################
 module "external_dns_pod_identity" {
   source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "v2.2.0"
+  version = "v2.6.0"
 
   name                          = "external-dns"
   attach_external_dns_policy    = true
@@ -221,7 +222,7 @@ resource "kubernetes_namespace_v1" "external_dns" {
 }
 
 resource "kubernetes_config_map_v1" "external_dns" {
-  depends_on = [flux_bootstrap_git.this, kubernetes_namespace_v1.external_dns]
+  depends_on = [kubernetes_namespace_v1.external_dns]
   immutable  = true
 
   metadata {
@@ -249,7 +250,7 @@ resource "kubernetes_config_map_v1" "external_dns" {
 ##############################
 module "external_secrets_pod_identity" {
   source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "v2.2.0"
+  version = "v2.6.0"
 
   name = "external-secrets"
 
@@ -269,8 +270,7 @@ module "external_secrets_pod_identity" {
 ##### AWS ALB CONTROLLER
 ##############################
 resource "kubernetes_config_map_v1" "alb_controller" {
-  depends_on = [flux_bootstrap_git.this]
-  immutable  = true
+  immutable = true
 
   metadata {
     name      = "alb-controller-values-terraform"
@@ -291,7 +291,7 @@ resource "kubernetes_config_map_v1" "alb_controller" {
 
 module "aws_lb_controller_pod_identity" {
   source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "v2.5.0"
+  version = "v2.6.0"
 
   name                            = "aws-load-balancer-controller"
   attach_aws_lb_controller_policy = true
@@ -362,7 +362,8 @@ resource "random_password" "authentik_secret" {
 }
 
 resource "aws_secretsmanager_secret" "authentik_secret" {
-  name = "authentik/secret-key"
+  name                    = "authentik/secret-key"
+  recovery_window_in_days = var.authentik_secret_recovery_window
 }
 
 resource "aws_secretsmanager_secret_version" "authentik_secret_value" {
