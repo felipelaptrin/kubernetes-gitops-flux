@@ -4,4 +4,16 @@ resources:
   - namespace.yaml
   - helm-repository.yaml
   - helm-release.yaml
+  - external-secrets.yaml
   - http-route.yaml
+
+configMapGenerator:
+  - name: headlamp-values-base
+    namespace: headlamp
+    files:
+      - values.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+  labels:
+    reconcile.fluxcd.io/watch: Enabled
