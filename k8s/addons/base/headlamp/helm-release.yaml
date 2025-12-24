@@ -16,3 +16,7 @@ spec:
         name: headlamp
         namespace: flux-system
   interval: 5m
+  valuesFrom:
+    - kind: ConfigMap
+      name: headlamp-values-base
+      valuesKey: values.yaml
