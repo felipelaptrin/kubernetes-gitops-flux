@@ -7,6 +7,11 @@ spec:
   releaseName: istio-base
   driftDetection:
     mode: enabled
+    ignore:
+      - paths: [""]
+        target:
+          kind: ValidatingWebhookConfiguration
+          name: istiod-default-validator
   interval: 5m
   chart:
     spec:
