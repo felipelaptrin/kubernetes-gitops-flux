@@ -12,6 +12,11 @@ spec:
   hostnames:
     - ${TF_AUTHENTIK_HOSTNAME}
   rules:
+    - filters:
+        - type: RequestRedirect
+          requestRedirect:
+            scheme: https
+            statusCode: 301
     - backendRefs:
         - name: authentik-server
           port: 80
