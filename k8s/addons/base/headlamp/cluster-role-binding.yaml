@@ -7,6 +7,6 @@ roleRef:
   kind: ClusterRole
   name: view
 subjects:
-  - kind: Group
-    name: authentik
+  - kind: User
+    name: admin@admin.com
     apiGroup: rbac.authorization.k8s.io
