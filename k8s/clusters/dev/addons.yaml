@@ -10,6 +10,7 @@ spec:
   dependsOn:
     - name: crds
     - name: karpenter
+    - name: alb-controller
   sourceRef:
     kind: GitRepository
     name: flux-system
