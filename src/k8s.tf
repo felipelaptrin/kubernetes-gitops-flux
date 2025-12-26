@@ -368,17 +368,23 @@ resource "random_password" "authentik_admin_password" {
   special = false
 }
 
+resource "random_password" "authentik_token" {
+  length  = 64
+  special = false
+}
+
 resource "aws_secretsmanager_secret" "authentik_secret" {
   name                    = "authentik/secret-key"
   recovery_window_in_days = var.secret_recovery_window
 }
 
-resource "aws_secretsmanager_secret_version" "authentik_secret_value" {
+resource "aws_secretsmanager_secret_version" "authentik_secret" {
   secret_id = aws_secretsmanager_secret.authentik_secret.id
   secret_string = jsonencode({
     secretKey     = random_password.authentik_secret.result
     adminEmail    = "admin@admin.com"
-    adminPassword = aws_secretsmanager_secret.authentik_admin_password.id
+    adminPassword = random_password.authentik_admin_password.result
+    token         = random_password.authentik_token.result
   })
 }
 
