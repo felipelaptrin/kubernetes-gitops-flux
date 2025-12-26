@@ -73,6 +73,16 @@ module "eks" {
     }
   }
 
+  identity_providers = {
+    authentik = {
+      issuer_url     = "https://authentik.${var.domain}/application/o/headlamp/"
+      client_id      = nonsensitive(random_password.headlamp_client_id.result)
+      username_claim = "email"
+      groups_claim   = "groups"
+
+    }
+  }
+
   # Using EKS-Optimized Images: https://aws.amazon.com/blogs/containers/amazon-eks-optimized-amazon-linux-2023-amis-now-available/
   eks_managed_node_groups = {
     general-purpose = {
