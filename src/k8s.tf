@@ -80,6 +80,34 @@ YAML
   overwrite_on_create = true
 }
 
+resource "github_repository_file" "flux_bootstrap_alb_controller" {
+  repository          = var.repository_name
+  branch              = "main"
+  file                = "${local.flux_bootstrap_path}/alb-controller.yaml"
+  content             = <<-YAML
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: alb-controller
+  namespace: flux-system
+spec:
+  interval: 10m0s
+  path: ./k8s/addons/${var.environment}/alb-controller
+  prune: true
+  dependsOn:
+    - name: karpenter
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-vars-terraform
+YAML
+  commit_message      = "bootstrap flux by installing Kustomize CR to deploy ALB Controller"
+  overwrite_on_create = true
+}
+
 resource "github_repository_file" "flux_bootstrap_addons" {
   repository          = var.repository_name
   branch              = "main"
@@ -97,6 +125,7 @@ spec:
   dependsOn:
     - name: crds
     - name: karpenter
+    - name: alb-controller
   sourceRef:
     kind: GitRepository
     name: flux-system
