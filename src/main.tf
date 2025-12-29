@@ -76,7 +76,7 @@ module "eks" {
   identity_providers = {
     authentik = {
       issuer_url     = "https://authentik.${var.domain}/application/o/headlamp/"
-      client_id      = nonsensitive(random_password.headlamp_client_id.result)
+      client_id      = local.headlamp_oidc_client_id
       username_claim = "email"
       groups_claim   = "groups"
 

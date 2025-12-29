@@ -26,8 +26,9 @@ resource "flux_bootstrap_git" "this" {
     module.karpenter,
   ]
 
-  path    = local.flux_bootstrap_path
-  version = var.flux_version
+  path                 = local.flux_bootstrap_path
+  delete_git_manifests = false
+  version              = var.flux_version
 }
 
 resource "github_repository_file" "flux_bootstrap_crds" {
@@ -403,7 +404,8 @@ resource "random_password" "authentik_token" {
 }
 
 resource "aws_secretsmanager_secret" "authentik_secret" {
-  name                    = "authentik/secret-key"
+  name                    = "${var.environment}/k8s/authentik"
+  description             = "Stores Authentik related secrets"
   recovery_window_in_days = var.secret_recovery_window
 }
 
@@ -452,27 +454,22 @@ resource "kubernetes_config_map_v1" "authentik" {
 ##############################
 ##### HEADLAMP
 ##############################
-resource "random_password" "headlamp_client_id" {
-  length  = 40
-  special = false
-}
-
 resource "random_password" "headlamp_client_secret" {
   length  = 128
   special = false
 }
 
 resource "aws_secretsmanager_secret" "headlamp_secret" {
-  name                    = "headlamp/oidc"
-  description             = "Stores OIDC related settings"
+  name                    = "${var.environment}/k8s/headlamp"
+  description             = "Stores Headlamp related secrets"
   recovery_window_in_days = var.secret_recovery_window
 }
 
 resource "aws_secretsmanager_secret_version" "headlamp_secret" {
   secret_id = aws_secretsmanager_secret.headlamp_secret.id
   secret_string = jsonencode({
-    clientID     = random_password.headlamp_client_id.result
-    clientSecret = random_password.headlamp_client_secret.result
+    clientID     = local.headlamp_oidc_client_id
+    clientSecret = local.headlamp_oidc_secret
     issuerURL    = "https://authentik.${var.domain}/application/o/headlamp/"
     scopes       = "profile,email,groups"
   })
