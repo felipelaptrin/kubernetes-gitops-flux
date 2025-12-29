@@ -23,10 +23,6 @@ resource "authentik_provider_oauth2" "headlamp" {
       matching_mode = "strict",
       url           = "https://headlamp.${var.domain}/oidc-callback",
     },
-    {
-      matching_mode = "strict",
-      url           = "http://localhost:8000",
-    }
   ]
   property_mappings = [
     authentik_property_mapping_provider_scope.scope_email_verified_true.id,
